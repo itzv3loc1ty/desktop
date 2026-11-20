@@ -1326,6 +1326,7 @@ export class OverlayManager {
         this.focusMainWindow();
         return;
       }
+      if (action.type === "addToPlaylist") this.focusMainWindow();
       if (this.mainWindow && !this.mainWindow.isDestroyed()) {
         this.mainWindow.webContents.send("overlay:action", action);
       }

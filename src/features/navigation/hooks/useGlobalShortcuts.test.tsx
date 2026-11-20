@@ -21,6 +21,14 @@ const playerState: {
   status: "idle",
 };
 
+vi.mock("@/features/library", () => ({
+  addAndReport: vi.fn(),
+  getCachedPlaylists: () => [],
+  readRecentPlaylists: () => [],
+  toTrackDetails: (tracks: unknown[]) => tracks,
+  useModalStore: { getState: () => ({ openAddToPlaylist: vi.fn() }) },
+}));
+
 vi.mock("@/features/player", () => ({
   playerEngine: {
     togglePlayPause: vi.fn(),

@@ -77,6 +77,10 @@ let request: Promise<void> | null = null;
 const listeners = new Set<() => void>();
 let view = { data: cache, error: undefined as unknown, isLoading: true };
 
+export function getCachedPlaylists(): LibraryPlaylistSummary[] {
+  return cache.playlists;
+}
+
 export function notifyLibraryChanged() {
   window.dispatchEvent(new Event("library:changed"));
 }
@@ -90,6 +94,18 @@ export function evictPlaylistFromCache(id: string) {
   queryCache.delete(`playlist:detail:${id}`);
   queryCache.delete(`playlist:etag:${id}`);
   emit();
+}
+
+export function cachedPlaylistOverlap(
+  playlistId: string,
+  trackIds: string[],
+): number | undefined {
+  const detail = queryCache.get<LibraryPlaylistDetail>(
+    `playlist:detail:${playlistId}`,
+  );
+  if (!detail || detail.partial) return undefined;
+  const present = new Set(detail.tracks.map((track) => track.id));
+  return trackIds.filter((id) => present.has(id)).length;
 }
 
 function emit(error?: unknown, isLoading = false) {

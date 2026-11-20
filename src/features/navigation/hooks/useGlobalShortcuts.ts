@@ -15,6 +15,7 @@ import {
   isKeyHandledByFocusedControl,
   isTypingTarget,
 } from "../utils/shortcutGuards";
+import { handleAddToPlaylistShortcut } from "../utils/addToPlaylistShortcut";
 
 const SEEK_STEP_MS = 5_000;
 const DEFAULT_UNMUTE_LEVEL = 0.7;
@@ -136,6 +137,8 @@ export function useGlobalShortcuts(options: GlobalShortcutsOptions): void {
         else opts.openRightPanel();
         return;
       }
+
+      if (handleAddToPlaylistShortcut(event, mainApp)) return;
 
       if (matchesShortcut(event, mainApp.toggleMute)) {
         event.preventDefault();

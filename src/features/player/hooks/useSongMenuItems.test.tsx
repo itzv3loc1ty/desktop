@@ -22,6 +22,13 @@ vi.mock("@/features/library", () => ({
   },
 }));
 
+vi.mock("./useAddToPlaylistMenuItem", () => ({
+  useAddToPlaylistMenuItem: (track: { id: string } | null) =>
+    track
+      ? { id: "add-to-playlist", label: "Add to playlist", onClick: vi.fn() }
+      : null,
+}));
+
 vi.mock("@/languages", () => ({
   useTranslation: () => ({
     t: (key: string) => {
@@ -177,5 +184,27 @@ describe("useSongMenuItems", () => {
       coverUrl: "",
     })();
     expect(elsewhere.map((item) => item.id)).not.toContain("remove-from-queue");
+  });
+
+  it("offers add-to-playlist inside a playlist", () => {
+    const ids = renderHookHelper({
+      id: "track-456",
+      title: "Song",
+      artists: "Artist",
+      coverUrl: "",
+      playlistId: "playlist-1",
+      playlistItemId: "item-1",
+    })().map((entry) => entry.id);
+    expect(ids).toContain("add-to-playlist");
+  });
+
+  it("drops add-to-playlist for files on this device", () => {
+    const ids = renderHookHelper({
+      id: "local:abc",
+      title: "Demo",
+      artists: "Me",
+      coverUrl: "",
+    })().map((entry) => entry.id);
+    expect(ids).not.toContain("add-to-playlist");
   });
 });

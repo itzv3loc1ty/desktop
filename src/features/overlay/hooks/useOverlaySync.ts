@@ -7,6 +7,8 @@ import {
   toVolumeLevel,
 } from "@/features/player/engine/volume";
 import { useIsTrackLiked, useToggleTrackLike } from "@/features/library/hooks";
+import { useModalStore, toTrackDetails } from "@/features/library";
+import { isLocalTrackId } from "@/shared/media/local";
 import { useCoverSrc } from "@/features/covers";
 import { getAuthSession } from "@/shared/api";
 import { useAuthStore } from "@/features/auth/store/authStore";
@@ -152,6 +154,13 @@ export function useOverlaySync() {
                   );
                 },
               });
+            }
+            break;
+          case "addToPlaylist":
+            if (currentTrack && !isLocalTrackId(currentTrack.id)) {
+              useModalStore
+                .getState()
+                .openAddToPlaylist(toTrackDetails([currentTrack]));
             }
             break;
           case "volumeUp":

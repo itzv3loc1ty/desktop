@@ -1,36 +1,25 @@
-import { useCallback } from "react";
 import { useLocation } from "react-router-dom";
-import { useIsTrackLiked, useToggleTrackLike } from "@/features/library/hooks";
 import { ArtistAvatar, ArtistLink } from "@/features/artist";
 import { isLocalTrackId } from "@/shared/media/local";
-import { useTranslation } from "@/languages";
 import { ScrollableText } from "@/shared/ui";
 import { usePlayerStore } from "../store/playerStore";
 import { useGlassBlur } from "../store/visualModeStore";
 import { cn } from "@/shared/lib";
-import { LikeMorphIcon } from "./LikeMorphIcon";
+import { AddToPlaylistButton } from "./AddToPlaylistButton";
 
 interface FullscreenTrackInfoProps {
   onClose?: () => void;
 }
 
 export function FullscreenTrackInfo({ onClose }: FullscreenTrackInfoProps) {
-  const { t } = useTranslation();
   const location = useLocation();
   const track = usePlayerStore((s) => s.currentTrack);
   const glassBlur = useGlassBlur();
 
   const isLocal = isLocalTrackId(track?.id);
-  const isLiked = useIsTrackLiked(track?.id);
-  const toggleLike = useToggleTrackLike();
-
-  const handleLikeToggle = useCallback(() => {
-    if (!track) return;
-    toggleLike(track.id);
-  }, [track, toggleLike]);
 
   return (
-    <div className="flex w-full items-center gap-[12px]">
+    <div className="flex w-full items-center gap-[8px]">
       <div className="flex min-w-0 flex-1 flex-col gap-[4px]">
         <ScrollableText
           text={track?.title || ""}
@@ -72,17 +61,15 @@ export function FullscreenTrackInfo({ onClose }: FullscreenTrackInfoProps) {
       </div>
 
       {!isLocal && (
-        <button
-          type="button"
-          aria-label={isLiked ? t("common.unlike") : t("common.like")}
-          onClick={handleLikeToggle}
+        <AddToPlaylistButton
+          track={track}
+          side="top"
+          align="end"
           className={cn(
             "relative inline-flex h-[40px] w-[40px] shrink-0 items-center justify-center rounded-[11px] border-none bg-white/[0.06] cursor-pointer text-white transition-colors duration-200 ease-out hover:bg-white/[0.12] active:scale-[0.92]",
             glassBlur && "backdrop-blur-xl backdrop-brightness-[1.15]",
           )}
-        >
-          <LikeMorphIcon liked={Boolean(isLiked)} size={20} />
-        </button>
+        />
       )}
     </div>
   );

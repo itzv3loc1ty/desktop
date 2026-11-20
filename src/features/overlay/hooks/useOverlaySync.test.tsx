@@ -8,6 +8,11 @@ vi.mock("@/features/library/hooks", () => ({
   useToggleTrackLike: () => vi.fn(),
 }));
 
+vi.mock("@/features/library", () => ({
+  useModalStore: { getState: () => ({ openAddToPlaylist: vi.fn() }) },
+  toTrackDetails: (tracks: unknown[]) => tracks,
+}));
+
 vi.mock("@/features/covers", () => ({
   useCoverSrc: (url?: string | null) => url ?? null,
 }));
